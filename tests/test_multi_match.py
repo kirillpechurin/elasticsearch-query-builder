@@ -806,3 +806,146 @@ class TestCaseMultiMatchBoolPrefixElasticField:
             "operator": "AND",
             "minimum_should_match": "85%",
         }
+
+
+class TestCaseMultiMatchElasticFieldIntegration:
+    index_name = "test_multi_match"
+    mappings = {
+        "properties": {
+            "multi_match_text_1": {
+                "type": "text"
+            },
+            "multi_match_text_2": {
+                "type": "text"
+            },
+            "multi_match_text_3": {
+                "type": "text"
+            },
+            "nested_multi_match": {
+                "type": "nested",
+                "properties": {
+                    "multi_match_text_1": {
+                        "type": "text"
+                    },
+                    "multi_match_text_2": {
+                        "type": "text"
+                    },
+                    "multi_match_text_3": {
+                        "type": "text"
+                    },
+                }
+            }
+        }
+    }
+
+    @pytest.mark.index_payload(name=index_name, mappings=mappings)
+    @pytest.mark.parametrize("builder_params", [
+        dict(
+            parameter_name="multi_match_param",
+            field=builder_fields.MultiMatchElasticField(
+                query_type="best_fields",
+                operator="AND",
+                minimum_should_match="85%",
+                fuzziness="auto",
+                tie_breaker=0.3,
+                fields=[
+                    "multi_match_text_1",
+                    "multi_match_text_2",
+                    "multi_match_text_3",
+                ]
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="multi_match_param",
+            field=builder_fields.MultiMatchElasticField(
+                query_type="most_fields",
+                operator="AND",
+                minimum_should_match="85%",
+                fuzziness="auto",
+                fields=[
+                    "multi_match_text_1",
+                    "multi_match_text_2",
+                    "multi_match_text_3",
+                ]
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="multi_match_param",
+            field=builder_fields.MultiMatchElasticField(
+                query_type="phrase",
+                fields=[
+                    "multi_match_text_1",
+                    "multi_match_text_2",
+                    "multi_match_text_3",
+                ]
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="multi_match_param",
+            field=builder_fields.MultiMatchElasticField(
+                query_type="phrase_prefix",
+                fields=[
+                    "multi_match_text_1",
+                    "multi_match_text_2",
+                    "multi_match_text_3",
+                ]
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="multi_match_param",
+            field=builder_fields.MultiMatchElasticField(
+                query_type="cross_fields",
+                operator="AND",
+                minimum_should_match="85%",
+                fields=[
+                    "multi_match_text_1",
+                    "multi_match_text_2",
+                    "multi_match_text_3",
+                ]
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="multi_match_param",
+            field=builder_fields.MultiMatchElasticField(
+                query_type="bool_prefix",
+                operator="AND",
+                minimum_should_match="85%",
+                fields=[
+                    "multi_match_text_1",
+                    "multi_match_text_2",
+                    "multi_match_text_3",
+                ]
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="nested_multi_match_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_multi_match",
+                child=builder_fields.MultiMatchElasticField(
+                    query_type="best_fields",
+                    operator="AND",
+                    minimum_should_match="85%",
+                    fuzziness="auto",
+                    tie_breaker=0.3,
+                    fields=[
+                        "multi_match_text_1",
+                        "multi_match_text_2",
+                        "multi_match_text_3",
+                    ]
+                ),
+            ),
+            value="sample text",
+        ),
+    ])
+    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+        query = make_builder_instance(builder_params).query
+        data = elasticsearch_client.search(index=self.index_name, **query)
+        assert isinstance(data, dict)
+        assert data.get("hits") is not None
+        assert data["hits"]["total"]["value"] == 0

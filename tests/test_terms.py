@@ -79,3 +79,72 @@ class TestCaseTermsElasticField:
 
         query = cls({"terms_field": [1, 2, 3]}).query
         assert query['query']['bool']['should'][0]['terms']["terms_field_tests"] == [1, 2, 3]
+
+
+class TestCaseTermsElasticFieldIntegration:
+    index_name = "test_terms"
+    mappings = {
+        "properties": {
+            "terms_int": {
+                "type": "integer"
+            },
+            "terms_text": {
+                "type": "text"
+            },
+            "nested_terms": {
+                "type": "nested",
+                "properties": {
+                    "terms_int": {
+                        "type": "integer"
+                    },
+                    "terms_text": {
+                        "type": "text"
+                    },
+                }
+            },
+        }
+    }
+
+    @pytest.mark.index_payload(name=index_name, mappings=mappings)
+    @pytest.mark.parametrize("builder_params", [
+        dict(
+            parameter_name="terms_int_param",
+            field=builder_fields.TermsElasticField(
+                field_name="terms_int"
+            ),
+            value=[1, 2, 3],
+        ),
+        dict(
+            parameter_name="terms_text_param",
+            field=builder_fields.TermsElasticField(
+                field_name="terms_text"
+            ),
+            value=["sample-1", "sample-2", "sample-3"],
+        ),
+        dict(
+            parameter_name="nested_terms_int_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_terms",
+                child=builder_fields.TermsElasticField(
+                    field_name="terms_int",
+                )
+            ),
+            value=[1, 2, 3],
+        ),
+        dict(
+            parameter_name="nested_terms_text_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_terms",
+                child=builder_fields.TermsElasticField(
+                    field_name="terms_text",
+                )
+            ),
+            value=["sample-1", "sample-2", "sample-3"],
+        ),
+    ])
+    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+        query = make_builder_instance(builder_params).query
+        data = elasticsearch_client.search(index=self.index_name, **query)
+        assert isinstance(data, dict)
+        assert data.get("hits") is not None
+        assert data["hits"]["total"]["value"] == 0

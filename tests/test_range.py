@@ -189,3 +189,117 @@ class TestCaseRangeElasticField:
             assert True
         else:
             assert False
+
+
+class TestCaseRangeElasticFieldIntegration:
+    index_name = "test_range"
+    mappings = {
+        "properties": {
+            "range_int": {
+                "type": "integer"
+            },
+            "range_float": {
+                "type": "float"
+            },
+            "range_double": {
+                "type": "double"
+            },
+            "range_half_float": {
+                "type": "half_float"
+            },
+            "range_scaled_float": {
+                "type": "scaled_float",
+                "scaling_factor": 100,
+            },
+            "nested_range": {
+                "type": "nested",
+                "properties": {
+                    "range_int": {
+                        "type": "integer"
+                    },
+                    "range_float": {
+                        "type": "float"
+                    },
+                }
+            }
+        }
+    }
+
+    @pytest.mark.index_payload(name=index_name, mappings=mappings)
+    @pytest.mark.parametrize("builder_params", [
+        dict(
+            parameter_name="range_int_param",
+            field=builder_fields.RangeElasticField(
+                field_name="range_int",
+                input_type=int,
+                lookup_expr="gte"
+            ),
+            value=123,
+        ),
+        dict(
+            parameter_name="range_float_param",
+            field=builder_fields.RangeElasticField(
+                field_name="range_float",
+                input_type=float,
+                lookup_expr="lte"
+            ),
+            value=123.123,
+        ),
+        dict(
+            parameter_name="range_double_param",
+            field=builder_fields.RangeElasticField(
+                field_name="range_double",
+                input_type=float,
+                lookup_expr="gte"
+            ),
+            value=123.123,
+        ),
+        dict(
+            parameter_name="range_half_float_param",
+            field=builder_fields.RangeElasticField(
+                field_name="range_half_float",
+                input_type=float,
+                lookup_expr="gte"
+            ),
+            value=123.123,
+        ),
+        dict(
+            parameter_name="range_scaled_float_param",
+            field=builder_fields.RangeElasticField(
+                field_name="range_scaled_float",
+                input_type=float,
+                lookup_expr="gte"
+            ),
+            value=123.12,
+        ),
+        dict(
+            parameter_name="nested_range_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_range",
+                child=builder_fields.RangeElasticField(
+                    field_name="range_int",
+                    input_type=int,
+                    lookup_expr="gte"
+                ),
+            ),
+            value=123.123,
+        ),
+        dict(
+            parameter_name="nested_range_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_range",
+                child=builder_fields.RangeElasticField(
+                    field_name="range_float",
+                    input_type=float,
+                    lookup_expr="lte"
+                ),
+            ),
+            value=123.123,
+        ),
+    ])
+    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+        query = make_builder_instance(builder_params).query
+        data = elasticsearch_client.search(index=self.index_name, **query)
+        assert isinstance(data, dict)
+        assert data.get("hits") is not None
+        assert data["hits"]["total"]["value"] == 0

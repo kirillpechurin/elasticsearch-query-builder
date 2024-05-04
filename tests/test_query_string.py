@@ -193,3 +193,100 @@ class TestCaseMatchElasticField:
             "minimum_should_match": "85%",
             "fields": ["sample_1", "sample_2"]
         }
+
+
+class TestCaseQueryStringElasticFieldIntegration:
+    index_name = "test_query_string"
+    mappings = {
+        "properties": {
+            "query_string_text_1": {
+                "type": "text"
+            },
+            "query_string_text_2": {
+                "type": "text"
+            },
+            "nested_query_string": {
+                "type": "nested",
+                "properties": {
+                    "query_string_text_1": {
+                        "type": "text"
+                    },
+                    "query_string_text_2": {
+                        "type": "text"
+                    },
+                }
+            }
+        }
+    }
+
+    @pytest.mark.index_payload(name=index_name, mappings=mappings)
+    @pytest.mark.parametrize("builder_params", [
+        dict(
+            parameter_name="query_string_param",
+            field=builder_fields.QueryStringElasticField(
+                default_field="query_string_text_1",
+                fuzziness="auto",
+                default_operator="AND",
+                minimum_should_match="85%"
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="query_string_param",
+            field=builder_fields.QueryStringElasticField(
+                fields=[
+                    "query_string_text_1",
+                    "query_string_text_2"
+                ],
+                fuzziness="auto",
+                default_operator="AND",
+                minimum_should_match="85%"
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="query_string_param",
+            field=builder_fields.QueryStringElasticField(
+                field_name="query_string_text_1",
+                fuzziness="auto",
+                default_operator="AND",
+                minimum_should_match="85%"
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="nested_query_string_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_query_string",
+                child=builder_fields.QueryStringElasticField(
+                    default_field="query_string_text",
+                    fuzziness="auto",
+                    default_operator="AND",
+                    minimum_should_match="85%"
+                ),
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="nested_query_string_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_query_string",
+                child=builder_fields.QueryStringElasticField(
+                    fields=[
+                        "query_string_text_1",
+                        "query_string_text_2"
+                    ],
+                    fuzziness="auto",
+                    default_operator="AND",
+                    minimum_should_match="85%"
+                ),
+            ),
+            value="sample text",
+        ),
+    ])
+    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+        query = make_builder_instance(builder_params).query
+        data = elasticsearch_client.search(index=self.index_name, **query)
+        assert isinstance(data, dict)
+        assert data.get("hits") is not None
+        assert data["hits"]["total"]["value"] == 0
