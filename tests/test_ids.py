@@ -79,3 +79,29 @@ class TestCaseIdsElasticField:
 
         query = cls({"ids": [1, 2, 3]}).query
         assert query['query']['bool']['should'][0]['ids']["values"] == [1, 2, 3]
+
+
+class TestCaseIdsElasticFieldIntegration:
+    index_name = "test_ids"
+    mappings = {
+        "properties": {
+            "sample": {
+                "type": "text"
+            },
+        }
+    }
+
+    @pytest.mark.index_payload(name=index_name, mappings=mappings)
+    @pytest.mark.parametrize("builder_params", [
+        dict(
+            parameter_name="ids_param",
+            field=builder_fields.IdsElasticField(),
+            value=[1, 2, 3],
+        ),
+    ])
+    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+        query = make_builder_instance(builder_params).query
+        data = elasticsearch_client.search(index=self.index_name, **query)
+        assert isinstance(data, dict)
+        assert data.get("hits") is not None
+        assert data["hits"]["total"]["value"] == 0

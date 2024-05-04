@@ -109,3 +109,53 @@ class TestCaseMatchBoolPrefixElasticField:
             "operator": "AND",
             "minimum_should_match": "85%"
         }
+
+
+class TestCaseMatchBoolPrefixElasticFieldIntegration:
+    index_name = "test_match_bool_prefix"
+    mappings = {
+        "properties": {
+            "match_bool_prefix_text": {
+                "type": "text"
+            },
+            "nested_match_bool_prefix": {
+                "type": "nested",
+                "properties": {
+                    "match_bool_prefix_text": {
+                        "type": "text"
+                    },
+                }
+            }
+        }
+    }
+
+    @pytest.mark.index_payload(name=index_name, mappings=mappings)
+    @pytest.mark.parametrize("builder_params", [
+        dict(
+            parameter_name="match_bool_prefix_param",
+            field=builder_fields.MatchBoolPrefixElasticField(
+                field_name="match_bool_prefix_text",
+                operator="AND",
+                minimum_should_match="85%"
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="nested_match_bool_prefix_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_match_bool_prefix",
+                child=builder_fields.MatchBoolPrefixElasticField(
+                    field_name="match_bool_prefix_text",
+                    operator="AND",
+                    minimum_should_match="85%"
+                ),
+            ),
+            value="sample text",
+        ),
+    ])
+    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+        query = make_builder_instance(builder_params).query
+        data = elasticsearch_client.search(index=self.index_name, **query)
+        assert isinstance(data, dict)
+        assert data.get("hits") is not None
+        assert data["hits"]["total"]["value"] == 0

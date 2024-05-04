@@ -112,3 +112,101 @@ class TestCaseTermElasticField:
 
         query = cls({"term_field_2": "test-text"}).query
         assert query['query']['bool']['must'][0]['term']['sample'] == "test-text"
+
+
+class TestCaseTermElasticFieldIntegration:
+    index_name = "test_term"
+    mappings = {
+        "properties": {
+            "term_int": {
+                "type": "integer"
+            },
+            "term_text": {
+                "type": "text"
+            },
+            "term_bool": {
+                "type": "boolean"
+            },
+            "nested_term": {
+                "type": "nested",
+                "properties": {
+                    "term_int": {
+                        "type": "integer"
+                    },
+                    "term_text": {
+                        "type": "text"
+                    },
+                    "term_bool": {
+                        "type": "boolean"
+                    },
+                }
+            }
+        }
+    }
+
+    @pytest.mark.index_payload(name=index_name, mappings=mappings)
+    @pytest.mark.parametrize("builder_params", [
+        dict(
+            parameter_name="term_int_param",
+            field=builder_fields.TermElasticField(
+                field_name="term_int",
+                input_type=int
+            ),
+            value="1",
+        ),
+        dict(
+            parameter_name="term_text_param",
+            field=builder_fields.TermElasticField(
+                field_name="term_text",
+                input_type=int
+            ),
+            value="1",
+        ),
+        dict(
+            parameter_name="term_bool_param",
+            field=builder_fields.TermElasticField(
+                field_name="term_bool",
+                input_type=bool
+            ),
+            value="true",
+        ),
+        dict(
+            parameter_name="nested_term_int_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_term",
+                child=builder_fields.TermElasticField(
+                    field_name="term_int",
+                    input_type=int
+                ),
+            ),
+            value="1",
+        ),
+        dict(
+            parameter_name="nested_term_text_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_term",
+                child=builder_fields.TermElasticField(
+                    field_name="term_text",
+                    input_type=str
+                ),
+            ),
+            value="sample",
+        ),
+        dict(
+            parameter_name="nested_term_bool_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_term",
+                child=builder_fields.TermElasticField(
+                    field_name="term_bool",
+                    input_type=str
+                ),
+            ),
+            value="true",
+        ),
+    ])
+    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+        query = make_builder_instance(builder_params).query
+        data = elasticsearch_client.search(index=self.index_name, **query)
+        assert isinstance(data, dict)
+        assert data.get("hits") is not None
+        assert data["hits"]["total"]["value"] == 0

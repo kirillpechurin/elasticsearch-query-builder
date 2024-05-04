@@ -191,3 +191,82 @@ class TestCaseMatchElasticFieldStringType:
             "fuzziness": "auto",
             "minimum_should_match": "85%"
         }
+
+
+class TestCaseMatchElasticFieldIntegration:
+    index_name = "test_match"
+    mappings = {
+        "properties": {
+            "match_int": {
+                "type": "integer"
+            },
+            "match_text": {
+                "type": "text"
+            },
+            "nested_match": {
+                "type": "nested",
+                "properties": {
+                    "match_int": {
+                        "type": "integer"
+                    },
+                    "match_text": {
+                        "type": "text"
+                    }
+                }
+            }
+        }
+    }
+
+    @pytest.mark.index_payload(name=index_name, mappings=mappings)
+    @pytest.mark.parametrize("builder_params", [
+        dict(
+            parameter_name="match_int_param",
+            field=builder_fields.MatchElasticField(
+                field_name="match_int",
+                input_type=int
+            ),
+            value=1,
+        ),
+        dict(
+            parameter_name="choice_text_param",
+            field=builder_fields.MatchElasticField(
+                field_name="match_text",
+                input_type=str,
+                operator="AND",
+                fuzziness="auto",
+                minimum_should_match="85%"
+            ),
+            value="sample text",
+        ),
+        dict(
+            parameter_name="nested_match_int_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_match",
+                child=builder_fields.MatchElasticField(
+                    field_name="match_int",
+                    input_type=int
+                ),
+            ),
+            value=3,
+        ),
+        dict(
+            parameter_name="nested_match_text_param",
+            field=builder_fields.NestedElasticField(
+                path="nested_match",
+                child=builder_fields.MatchElasticField(
+                    field_name="match_text",
+                    input_type=str,
+                    operator="AND",
+                    fuzziness="auto",
+                    minimum_should_match="85%"
+                ),
+            ),
+            value="sample text",
+        )
+    ])
+    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+        query = make_builder_instance(builder_params).query
+        data = elasticsearch_client.search(index=self.index_name, **query)
+        assert isinstance(data, dict)
+        assert data.get("hits") is not None
+        assert data["hits"]["total"]["value"] == 0
