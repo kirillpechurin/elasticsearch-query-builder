@@ -4,3 +4,7 @@ venv
 env
 
 .idea/
+
+*.egg
+*.egg-info
+dist
