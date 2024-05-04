@@ -13,7 +13,7 @@ class QueryStringElasticField(ElasticField):
                  *args,
                  **kwargs):
         super().__init__(*args, **kwargs)
-        if default_field and len(fields):
+        if default_field and fields and len(fields):
             raise TypeError
 
         self._attrs = [
