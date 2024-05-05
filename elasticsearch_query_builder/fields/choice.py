@@ -16,7 +16,10 @@ class ChoiceElasticField(ElasticField):
         self._choices = choices
         self._child = child
 
-    def get_query(self, value, field_name: str, additional_queries: Union[list, dict, None] = None):
+    def get_query(self,
+                  value,
+                  field_name: str,
+                  additional_queries: Union[list, dict, None] = None):
         if value not in self._choices:
             return {}
 

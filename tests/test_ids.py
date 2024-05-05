@@ -55,30 +55,42 @@ class TestCaseIdsElasticField:
                 return self._current - 1
 
         query = cls({"ids": _IterableExample(1, 5)}).query
-        assert query['query']['bool']['must'][0]['ids']["values"] == [1, 2, 3, 4]
+        assert query['query']['bool']['must'][0][
+                   'ids'
+               ]["values"] == [1, 2, 3, 4]
 
     def test_field_name(self, cls):
         query = cls({"ids": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['ids']["values"] == [1, 2, 3]
+        assert query['query']['bool']['must'][0][
+                   'ids'
+               ]["values"] == [1, 2, 3]
 
         cls.ids.field_name = "changed_ids"
 
         query = cls({"ids": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['ids']["values"] == [1, 2, 3]
+        assert query['query']['bool']['must'][0][
+                   'ids'
+               ]["values"] == [1, 2, 3]
 
     def test_logic_operator(self, cls):
         query = cls({"ids": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['ids']["values"] == [1, 2, 3]
+        assert query['query']['bool']['must'][0][
+                   'ids'
+               ]["values"] == [1, 2, 3]
 
         cls.ids._logic_operator = "filter"
 
         query = cls({"ids": [1, 2, 3]}).query
-        assert query['query']['bool']['filter'][0]['ids']["values"] == [1, 2, 3]
+        assert query['query']['bool']['filter'][0][
+                   'ids'
+               ]["values"] == [1, 2, 3]
 
         cls.ids._logic_operator = "should"
 
         query = cls({"ids": [1, 2, 3]}).query
-        assert query['query']['bool']['should'][0]['ids']["values"] == [1, 2, 3]
+        assert query['query']['bool']['should'][0][
+                   'ids'
+               ]["values"] == [1, 2, 3]
 
 
 class TestCaseIdsElasticFieldIntegration:
@@ -99,9 +111,11 @@ class TestCaseIdsElasticFieldIntegration:
             value=[1, 2, 3],
         ),
     ])
-    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+    def test_request(self,
+                     elasticsearch_client,
+                     make_builder_instance,
+                     builder_params):
         query = make_builder_instance(builder_params).query
         data = elasticsearch_client.search(index=self.index_name, **query)
-        assert isinstance(data, dict)
-        assert data.get("hits") is not None
+        assert data["hits"] is not None
         assert data["hits"]["total"]["value"] == 0

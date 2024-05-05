@@ -8,3 +8,11 @@ env
 *.egg
 *.egg-info
 dist
+
+.coverage
+
+.tox
+
+.github/reports
+
+.env

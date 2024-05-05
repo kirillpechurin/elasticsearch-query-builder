@@ -1,0 +1,100 @@
+name: CI
+run-name: CI
+
+on:
+  push:
+    branches:
+      - releases/*
+      - master
+  pull_request:
+    branches:
+      - releases/*
+      - master
+
+env:
+  MOUNT_TEST_COVERAGE_REPORTS: ./.github/reports/tests_coverage
+  ELASTICSEARCH_PORT: 9200
+  ELASTICSEARCH_URL: http://localhost:9200
+  ELASTICSEARCH_USERNAME: elastic
+  ELASTICSEARCH_PASSWORD: changeme
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          python3 -m pip install tox
+      - name: Run linters
+        run: tox -e lint
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        es-server-stack-version: ["7.4.0", "8.2.0"]
+        python-es-version: ["7.0.0", "8.2.0"]
+
+        exclude:
+          - es-server-stack-version: "7.4.0"
+            python-es-version: "8.2.0"
+          - es-server-stack-version: "8.2.0"
+            python-es-version: "7.0.0"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Elasticsearch server
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: ${{ matrix.es-server-stack-version }}
+          port: ${{ env.ELASTICSEARCH_PORT }}
+          elasticsearch_password: ${{ env.ELASTICSEARCH_PASSWORD }}
+          security-enabled: false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install tox
+          python3 -m pip install "elasticsearch==${{ matrix.python-es-version }}"
+          python3 -m pip install -r requirements.tests.txt
+
+      - name: Prepare test environment for Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.python-es-version }}
+        run: |
+          export ELASTICSEARCH_URL=${{ env.ELASTICSEARCH_URL }}
+          export ELASTICSEARCH_USERNAME=${{ env.ELASTICSEARCH_USERNAME }}
+          export ELASTICSEARCH_PASSWORD=${{ env.ELASTICSEARCH_PASSWORD }}
+          
+          envsubst < ./tests/.env.template > ./tests/.env
+
+      - name: Run tests with Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.python-es-version }}
+        run: |
+          TEST_OPTS=$(echo "py${{ matrix.python-version }}-es${{ matrix.python-es-version }}" | tr -d .)
+          python3 -m tox -e $TEST_OPTS
+
+      - name: Upload test coverage results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage-results-${{ matrix.python-version }}-${{ matrix.es-server-stack-version }}-${{ matrix.python-es-version }}
+          path: ${{ env.MOUNT_TEST_COVERAGE_REPORTS }}/common.xml
+
+#      - name: Publish Coverage Report
+#        uses: codecov/codecov-action@v4
+#        with:
+#          fail_ci_if_error: true
+#          files: ${{ env.MOUNT_TEST_COVERAGE_REPORTS }}/common.xml

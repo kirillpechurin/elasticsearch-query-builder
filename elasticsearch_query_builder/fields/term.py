@@ -13,7 +13,10 @@ class TermElasticField(ElasticField):
         super().__init__(*args, **kwargs)
         self._input_type = input_type
 
-    def _get_query(self, value, field_query_name: str, additional_queries: Union[list, dict, None] = None):
+    def _get_query(self,
+                   value,
+                   field_query_name: str,
+                   additional_queries: Union[list, dict, None] = None):
         return {
             "term": {
                 self._field_name:  value
