@@ -40,13 +40,13 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
-        es-server-stack-version: ["7.4.0", "8.4.0"]
-        python-es-version: ["7.0.0", "8.1.2"]
+        es-server-stack-version: ["7.4.0", "8.2.0"]
+        python-es-version: ["7.0.0", "8.2.0"]
 
         exclude:
           - es-server-stack-version: "7.4.0"
-            python-es-version: "8.1.2"
-          - es-server-stack-version: "8.4.0"
+            python-es-version: "8.2.0"
+          - es-server-stack-version: "8.2.0"
             python-es-version: "7.0.0"
 
     steps:
@@ -59,6 +59,7 @@ jobs:
           stack-version: ${{ matrix.es-server-stack-version }}
           port: ${{ env.ELASTICSEARCH_PORT }}
           elasticsearch_password: ${{ env.ELASTICSEARCH_PASSWORD }}
+          security-enabled: false
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -89,7 +90,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: test-coverage-results
+          name: test-coverage-results-${{ matrix.python-version }}-${{ matrix.es-server-stack-version }}-${{ matrix.python-es-version }}
           path: ${{ env.MOUNT_TEST_COVERAGE_REPORTS }}/common.xml
 
 #      - name: Publish Coverage Report
