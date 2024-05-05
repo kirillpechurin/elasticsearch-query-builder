@@ -25,7 +25,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Set up Python 3.8
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.8"
       - name: Install dependencies
@@ -40,7 +40,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
-        es-server-stack-version: ["7.4.0", "8.0.0"]
+        es-server-stack-version: ["7.4.0", "8.4.0"]
         python-es-version: ["7.0.0", "8.0.0"]
 
         exclude:
