@@ -264,6 +264,5 @@ class TestCaseChoiceElasticFieldIntegration:
                      builder_params):
         query = make_builder_instance(builder_params).query
         data = elasticsearch_client.search(index=self.index_name, **query)
-        assert isinstance(data, dict)
-        assert data.get("hits") is not None
+        assert data["hits"] is not None
         assert data["hits"]["total"]["value"] == 0
