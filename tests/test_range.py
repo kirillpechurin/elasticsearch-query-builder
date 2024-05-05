@@ -37,13 +37,19 @@ class TestCaseRangeElasticField:
 
     def test_validation(self, cls):
         query = cls({"range_field": "1"}).query
-        assert query['query']['bool']['must'][0]['range']['range_field_test']["gte"] == 1
+        assert query['query']['bool']['must'][0][
+                   'range'
+               ]['range_field_test']["gte"] == 1
 
         query = cls({"range_field": 1}).query
-        assert query['query']['bool']['must'][0]['range']['range_field_test']['gte'] == 1
+        assert query['query']['bool']['must'][0][
+                   'range'
+               ]['range_field_test']['gte'] == 1
 
         query = cls({"range_field": 1.53}).query
-        assert query['query']['bool']['must'][0]['range']['range_field_test']['gte'] == 1
+        assert query['query']['bool']['must'][0][
+                   'range'
+               ]['range_field_test']['gte'] == 1
 
         try:
             query = cls({"range_field": "test-text"}).query
@@ -54,7 +60,9 @@ class TestCaseRangeElasticField:
 
     def test_field_name(self, cls):
         query = cls({"range_field": "1"}).query
-        assert query['query']['bool']['must'][0]['range']['range_field_test']["gte"] == 1
+        assert query['query']['bool']['must'][0][
+                   'range'
+               ]['range_field_test']["gte"] == 1
 
         cls.range_field.field_name = "changed_range_field_test"
 
@@ -67,17 +75,23 @@ class TestCaseRangeElasticField:
 
     def test_logic_operator(self, cls):
         query = cls({"range_field": "1"}).query
-        assert query['query']['bool']['must'][0]['range']['range_field_test']["gte"] == 1
+        assert query['query']['bool']['must'][0][
+                   'range'
+               ]['range_field_test']["gte"] == 1
 
         cls.range_field._logic_operator = "filter"
 
         query = cls({"range_field": "2"}).query
-        assert query['query']['bool']['filter'][0]['range']['range_field_test']["gte"] == 2
+        assert query['query']['bool']['filter'][0][
+                   'range'
+               ]['range_field_test']["gte"] == 2
 
         cls.range_field._logic_operator = "should"
 
         query = cls({"range_field": "3"}).query
-        assert query['query']['bool']['should'][0]['range']['range_field_test']["gte"] == 3
+        assert query['query']['bool']['should'][0][
+                   'range'
+               ]['range_field_test']["gte"] == 3
 
     def test_lookup_expr_gte(self, cls):
         cls.range_field._lookup_expr = "gte"
@@ -175,13 +189,19 @@ class TestCaseRangeElasticField:
         )
 
         query = cls({"range_field_2": "1"}).query
-        assert query['query']['bool']['must'][0]['range']['sample']["gte"] == 1.0
+        assert query['query']['bool']['must'][0][
+                   'range'
+               ]['sample']["gte"] == 1.0
 
         query = cls({"range_field_2": 1}).query
-        assert query['query']['bool']['must'][0]['range']['sample']['gte'] == 1.0
+        assert query['query']['bool']['must'][0][
+                   'range'
+               ]['sample']['gte'] == 1.0
 
         query = cls({"range_field_2": "1.53"}).query
-        assert query['query']['bool']['must'][0]['range']['sample']['gte'] == 1.53
+        assert query['query']['bool']['must'][0][
+                   'range'
+               ]['sample']['gte'] == 1.53
 
         try:
             query = cls({"range_field_2": "test-text"}).query
@@ -297,7 +317,10 @@ class TestCaseRangeElasticFieldIntegration:
             value=123.123,
         ),
     ])
-    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+    def test_request(self,
+                     elasticsearch_client,
+                     make_builder_instance,
+                     builder_params):
         query = make_builder_instance(builder_params).query
         data = elasticsearch_client.search(index=self.index_name, **query)
         assert isinstance(data, dict)

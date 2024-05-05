@@ -34,13 +34,19 @@ class TestCaseTermElasticField:
 
     def test_validation(self, cls):
         query = cls({"term_field": "1"}).query
-        assert query['query']['bool']['must'][0]['term']['term_field_test'] == 1
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['term_field_test'] == 1
 
         query = cls({"term_field": 1}).query
-        assert query['query']['bool']['must'][0]['term']['term_field_test'] == 1
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['term_field_test'] == 1
 
         query = cls({"term_field": 1.53}).query
-        assert query['query']['bool']['must'][0]['term']['term_field_test'] == 1
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['term_field_test'] == 1
 
         try:
             query = cls({"term_field": "test-text"}).query
@@ -51,7 +57,9 @@ class TestCaseTermElasticField:
 
     def test_field_name(self, cls):
         query = cls({"term_field": "1"}).query
-        assert query['query']['bool']['must'][0]['term']['term_field_test'] == 1
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['term_field_test'] == 1
 
         cls.term_field.field_name = "changed_term_field_test"
 
@@ -62,17 +70,23 @@ class TestCaseTermElasticField:
 
     def test_logic_operator(self, cls):
         query = cls({"term_field": "1"}).query
-        assert query['query']['bool']['must'][0]['term']['term_field_test'] == 1
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['term_field_test'] == 1
 
         cls.term_field._logic_operator = "filter"
 
         query = cls({"term_field": "2"}).query
-        assert query['query']['bool']['filter'][0]['term']['term_field_test'] == 2
+        assert query['query']['bool']['filter'][0][
+                   'term'
+               ]['term_field_test'] == 2
 
         cls.term_field._logic_operator = "should"
 
         query = cls({"term_field": "3"}).query
-        assert query['query']['bool']['should'][0]['term']['term_field_test'] == 3
+        assert query['query']['bool']['should'][0][
+                   'term'
+               ]['term_field_test'] == 3
 
     def test_input_type_bool_validation(self, cls):
         cls.term_field_2 = builder_fields.TermElasticField(
@@ -81,13 +95,19 @@ class TestCaseTermElasticField:
         )
 
         query = cls({"term_field_2": "true"}).query
-        assert query['query']['bool']['must'][0]['term']['sample'] is True
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['sample'] is True
 
         query = cls({"term_field_2": "any"}).query
-        assert query['query']['bool']['must'][0]['term']['sample'] is False
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['sample'] is False
 
         query = cls({"term_field_2": True}).query
-        assert query['query']['bool']['must'][0]['term']['sample'] is True
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['sample'] is True
 
         query = cls({"term_field_2": False}).query
         assert query['query']['bool']['must'][0]['term']['sample'] is False
@@ -102,16 +122,24 @@ class TestCaseTermElasticField:
         )
 
         query = cls({"term_field_2": "1"}).query
-        assert query['query']['bool']['must'][0]['term']['sample'] == "1"
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['sample'] == "1"
 
         query = cls({"term_field_2": 1}).query
-        assert query['query']['bool']['must'][0]['term']['sample'] == "1"
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['sample'] == "1"
 
         query = cls({"term_field_2": "1.53"}).query
-        assert query['query']['bool']['must'][0]['term']['sample'] == "1.53"
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['sample'] == "1.53"
 
         query = cls({"term_field_2": "test-text"}).query
-        assert query['query']['bool']['must'][0]['term']['sample'] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'term'
+               ]['sample'] == "test-text"
 
 
 class TestCaseTermElasticFieldIntegration:
@@ -204,7 +232,10 @@ class TestCaseTermElasticFieldIntegration:
             value="true",
         ),
     ])
-    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+    def test_request(self,
+                     elasticsearch_client,
+                     make_builder_instance,
+                     builder_params):
         query = make_builder_instance(builder_params).query
         data = elasticsearch_client.search(index=self.index_name, **query)
         assert isinstance(data, dict)

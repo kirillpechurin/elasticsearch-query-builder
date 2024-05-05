@@ -28,7 +28,11 @@ class NestedElasticField(ElasticField):
         # Set normalized child field name with nested path.
         self._child.field_name = f"{self._path}.{default_child_field_name}"
         # Get query for child.
-        query = self._child.get_query(value, field_name, additional_queries=additional_queries)
+        query = self._child.get_query(
+            value,
+            field_name,
+            additional_queries=additional_queries
+        )
         # Reset child field name.
         self._child.field_name = default_child_field_name
 

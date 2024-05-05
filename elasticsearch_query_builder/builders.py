@@ -44,7 +44,10 @@ class BaseQueryBuilder:
         for field_query_name in params.keys():
             field = fields[field_query_name]
             try:
-                params[field_query_name] = field.normalize_input(params[field_query_name], field_query_name)
+                params[field_query_name] = field.normalize_input(
+                    params[field_query_name],
+                    field_query_name
+                )
             except ValueError:
                 raise ValueError("Invalid input for `%s`" % field_query_name)
 
@@ -82,7 +85,9 @@ class ElasticsearchQueryBuilder(BaseQueryBuilder):
         for field_query_name, normalized_value in self._params.items():
             field = self._fields[field_query_name]
 
-            additional_queries = self._get_additional_queries_by_field_name(field_query_name)
+            additional_queries = self._get_additional_queries_by_field_name(
+                field_query_name
+            )
             field_query = field.get_query(
                 normalized_value,
                 field_query_name,

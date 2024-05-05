@@ -44,17 +44,25 @@ class TestCaseMultiMatchBestFieldsElasticField:
 
     def test_validation(self, cls):
         query = cls({"multi_match_field": "1"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "1"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "1"
 
         query = cls({"multi_match_field": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "[1, 2, 3]"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "[1, 2, 3]"
 
         query = cls({"multi_match_field": 3.0}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "3.0"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "3.0"
 
     def test_field_name(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field.field_name = "changed_multi_match_field"
 
@@ -71,17 +79,23 @@ class TestCaseMultiMatchBestFieldsElasticField:
 
     def test_logic_operator(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "filter"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['filter'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['filter'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "should"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['should'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['should'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
     def test_default_attrs(self, cls):
         assert cls.multi_match_field._attrs == [
@@ -235,17 +249,25 @@ class TestCaseMultiMatchMostFieldsElasticField:
 
     def test_validation(self, cls):
         query = cls({"multi_match_field": "1"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "1"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "1"
 
         query = cls({"multi_match_field": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "[1, 2, 3]"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "[1, 2, 3]"
 
         query = cls({"multi_match_field": 3.0}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "3.0"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "3.0"
 
     def test_field_name(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field.field_name = "changed_multi_match_field"
 
@@ -262,17 +284,23 @@ class TestCaseMultiMatchMostFieldsElasticField:
 
     def test_logic_operator(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "filter"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['filter'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['filter'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "should"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['should'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['should'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
     def test_default_attrs(self, cls):
         assert cls.multi_match_field._attrs == [
@@ -400,17 +428,25 @@ class TestCaseMultiMatchPhraseElasticField:
 
     def test_validation(self, cls):
         query = cls({"multi_match_field": "1"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "1"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "1"
 
         query = cls({"multi_match_field": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "[1, 2, 3]"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "[1, 2, 3]"
 
         query = cls({"multi_match_field": 3.0}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "3.0"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "3.0"
 
     def test_field_name(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field.field_name = "changed_multi_match_field"
 
@@ -427,17 +463,23 @@ class TestCaseMultiMatchPhraseElasticField:
 
     def test_logic_operator(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "filter"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['filter'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['filter'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "should"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['should'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['should'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
     def test_default_attrs(self, cls):
         assert cls.multi_match_field._attrs == []
@@ -486,14 +528,20 @@ class TestCaseMultiMatchPhrasePrefixElasticField:
         assert query['query']['bool']['must'][0]['multi_match']["query"] == "1"
 
         query = cls({"multi_match_field": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "[1, 2, 3]"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "[1, 2, 3]"
 
         query = cls({"multi_match_field": 3.0}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "3.0"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "3.0"
 
     def test_field_name(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field.field_name = "changed_multi_match_field"
 
@@ -510,17 +558,23 @@ class TestCaseMultiMatchPhrasePrefixElasticField:
 
     def test_logic_operator(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "filter"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['filter'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['filter'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "should"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['should'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['should'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
     def test_default_attrs(self, cls):
         assert cls.multi_match_field._attrs == []
@@ -566,17 +620,25 @@ class TestCaseMultiMatchCrossFieldsElasticField:
 
     def test_validation(self, cls):
         query = cls({"multi_match_field": "1"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "1"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "1"
 
         query = cls({"multi_match_field": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "[1, 2, 3]"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "[1, 2, 3]"
 
         query = cls({"multi_match_field": 3.0}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "3.0"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "3.0"
 
     def test_field_name(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field.field_name = "changed_multi_match_field"
 
@@ -593,17 +655,23 @@ class TestCaseMultiMatchCrossFieldsElasticField:
 
     def test_logic_operator(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "filter"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['filter'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['filter'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "should"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['should'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['should'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
     def test_default_attrs(self, cls):
         assert cls.multi_match_field._attrs == [
@@ -707,17 +775,25 @@ class TestCaseMultiMatchBoolPrefixElasticField:
 
     def test_validation(self, cls):
         query = cls({"multi_match_field": "1"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "1"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "1"
 
         query = cls({"multi_match_field": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "[1, 2, 3]"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "[1, 2, 3]"
 
         query = cls({"multi_match_field": 3.0}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "3.0"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "3.0"
 
     def test_field_name(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field.field_name = "changed_multi_match_field"
 
@@ -734,17 +810,23 @@ class TestCaseMultiMatchBoolPrefixElasticField:
 
     def test_logic_operator(self, cls):
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "filter"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['filter'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['filter'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
         cls.multi_match_field._logic_operator = "should"
 
         query = cls({"multi_match_field": "test-text"}).query
-        assert query['query']['bool']['should'][0]['multi_match']["query"] == "test-text"
+        assert query['query']['bool']['should'][0][
+                   'multi_match'
+               ]["query"] == "test-text"
 
     def test_default_attrs(self, cls):
         assert cls.multi_match_field._attrs == [
@@ -943,7 +1025,10 @@ class TestCaseMultiMatchElasticFieldIntegration:
             value="sample text",
         ),
     ])
-    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+    def test_request(self,
+                     elasticsearch_client,
+                     make_builder_instance,
+                     builder_params):
         query = make_builder_instance(builder_params).query
         data = elasticsearch_client.search(index=self.index_name, **query)
         assert isinstance(data, dict)

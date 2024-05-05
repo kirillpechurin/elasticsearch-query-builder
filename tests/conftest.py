@@ -10,6 +10,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "index_payload: mark test to run with prepared index"
     )
+    os.environ.setdefault("ELASTICSEARCH_URL", "localhost:9200")
 
 
 @pytest.fixture
@@ -36,7 +37,11 @@ def elasticsearch_client(request):
 def make_builder():
     def _make_builder(builder_params):
         builder = ElasticSearchQueryTestBuilder
-        setattr(builder, builder_params["parameter_name"], builder_params["field"])
+        setattr(
+            builder,
+            builder_params["parameter_name"],
+            builder_params["field"]
+        )
         return builder
 
     return _make_builder

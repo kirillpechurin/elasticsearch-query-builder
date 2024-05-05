@@ -39,10 +39,14 @@ class TestCaseChoiceElasticFieldIntType:
 
     def test_child_validation(self, cls):
         query = cls({"choice": "1"}).query
-        assert query['query']['bool']['must'][0]['match']['choice_test']["query"] == 1
+        assert query['query']['bool']['must'][0]['match'][
+                   'choice_test'
+               ]["query"] == 1
 
         query = cls({"choice": 1}).query
-        assert query['query']['bool']['must'][0]['match']['choice_test']["query"] == 1
+        assert query['query']['bool']['must'][0]['match'][
+                   'choice_test'
+               ]["query"] == 1
 
         cls.choice._child._input_type = str
         query = cls({"choice": "1"}).query
@@ -50,32 +54,46 @@ class TestCaseChoiceElasticFieldIntType:
 
         cls.choice._choices = ["1", "2", "3"]
         query = cls({"choice": "1"}).query
-        assert query['query']['bool']['must'][0]['match']['choice_test']["query"] == "1"
+        assert query['query']['bool']['must'][0]['match'][
+                   'choice_test'
+               ]["query"] == "1"
 
     def test_field_name(self, cls):
         query = cls({"choice": 1}).query
-        assert query['query']['bool']['must'][0]['match']['choice_test']["query"] == 1
+        assert query['query']['bool']['must'][0]['match'][
+                   'choice_test'
+               ]["query"] == 1
 
         cls.choice._child.field_name = "changed_choice_test"
 
         query = cls({"choice": 1}).query
-        assert query['query']['bool']['must'][0]['match']['changed_choice_test']["query"] == 1
+        assert query['query']['bool']['must'][0]['match'][
+                   'changed_choice_test'
+               ]["query"] == 1
 
     def test_choices(self, cls):
         for i in range(1, 3 + 1):
             query = cls({"choice": i}).query
-            assert query['query']['bool']['must'][0]['match']['choice_test']["query"] == i
+            assert query['query']['bool']['must'][0]['match'][
+                       'choice_test'
+                   ]["query"] == i
             query = cls({"choice": str(i)}).query
-            assert query['query']['bool']['must'][0]['match']['choice_test']["query"] == i
+            assert query['query']['bool']['must'][0]['match'][
+                       'choice_test'
+                   ]["query"] == i
 
         cls.choice._choices = ['1', '2', '3']
         cls.choice._child._input_type = str
 
         for i in range(1, 3 + 1):
             query = cls({"choice": i}).query
-            assert query['query']['bool']['must'][0]['match']['choice_test']['query'] == str(i)
+            assert query['query']['bool']['must'][0]['match'][
+                       'choice_test'
+                   ]['query'] == str(i)
             query = cls({"choice": str(i)}).query
-            assert query['query']['bool']['must'][0]['match']['choice_test']['query'] == str(i)
+            assert query['query']['bool']['must'][0]['match'][
+                       'choice_test'
+                   ]['query'] == str(i)
 
         query = cls({"choice": 6}).query
         assert query == {}
@@ -116,10 +134,14 @@ class TestCaseChoiceElasticFieldStringType:
 
     def test_child_validation(self, cls):
         query = cls({"choice": "1"}).query
-        assert query['query']['bool']['must'][0]['match']['choice_test']['query'] == "1"
+        assert query['query']['bool']['must'][0]['match'][
+                   'choice_test'
+               ]['query'] == "1"
 
         query = cls({"choice": 1}).query
-        assert query['query']['bool']['must'][0]['match']['choice_test']['query'] == "1"
+        assert query['query']['bool']['must'][0]['match'][
+                   'choice_test'
+               ]['query'] == "1"
 
         cls.choice._child._input_type = int
         query = cls({"choice": "1"}).query
@@ -127,23 +149,33 @@ class TestCaseChoiceElasticFieldStringType:
 
         cls.choice._choices = [1, 2, 3]
         query = cls({"choice": "1"}).query
-        assert query['query']['bool']['must'][0]['match']['choice_test']["query"] == 1
+        assert query['query']['bool']['must'][0]['match'][
+                   'choice_test'
+               ]["query"] == 1
 
     def test_field_name(self, cls):
         query = cls({"choice": "1"}).query
-        assert query['query']['bool']['must'][0]['match']['choice_test']['query'] == "1"
+        assert query['query']['bool']['must'][0]['match'][
+                   'choice_test'
+               ]['query'] == "1"
 
         cls.choice._child.field_name = "changed_choice_test"
 
         query = cls({"choice": "1"}).query
-        assert query['query']['bool']['must'][0]['match']['changed_choice_test']['query'] == "1"
+        assert query['query']['bool']['must'][0]['match'][
+                   'changed_choice_test'
+               ]['query'] == "1"
 
     def test_choices(self, cls):
         for i in range(1, 3 + 1):
             query = cls({"choice": i}).query
-            assert query['query']['bool']['must'][0]['match']['choice_test']['query'] == str(i)
+            assert query['query']['bool']['must'][0]['match'][
+                       'choice_test'
+                   ]['query'] == str(i)
             query = cls({"choice": str(i)}).query
-            assert query['query']['bool']['must'][0]['match']['choice_test']['query'] == str(i)
+            assert query['query']['bool']['must'][0]['match'][
+                       'choice_test'
+                   ]['query'] == str(i)
 
         query = cls({"choice": "6"}).query
         assert query == {}
@@ -226,7 +258,10 @@ class TestCaseChoiceElasticFieldIntegration:
             value="3",
         )
     ])
-    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+    def test_request(self,
+                     elasticsearch_client,
+                     make_builder_instance,
+                     builder_params):
         query = make_builder_instance(builder_params).query
         data = elasticsearch_client.search(index=self.index_name, **query)
         assert isinstance(data, dict)

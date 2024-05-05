@@ -1,3 +1,4 @@
+from .abstract import ElasticField
 from .choice import ChoiceElasticField
 from .exists import ExistsElasticField
 from .ids import IdsElasticField
@@ -11,3 +12,20 @@ from .query_string import QueryStringElasticField
 from .range import RangeElasticField
 from .term import TermElasticField
 from .terms import TermsElasticField
+
+__all__ = [
+    "ElasticField",
+    "ChoiceElasticField",
+    "ExistsElasticField",
+    "IdsElasticField",
+    "MatchElasticField",
+    "MatchBoolPrefixElasticField",
+    "MatchPhraseElasticField",
+    "MatchPhrasePrefixElasticField",
+    "MultiMatchElasticField",
+    "NestedElasticField",
+    "QueryStringElasticField",
+    "RangeElasticField",
+    "TermElasticField",
+    "TermsElasticField",
+]

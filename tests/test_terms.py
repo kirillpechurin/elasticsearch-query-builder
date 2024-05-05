@@ -33,10 +33,14 @@ class TestCaseTermsElasticField:
 
     def test_validation(self, cls):
         query = cls({"terms_field": (i for i in range(1, 3 + 1))}).query
-        assert query['query']['bool']['must'][0]['terms']["terms_field_tests"] == [1, 2, 3]
+        assert query['query']['bool']['must'][0][
+                   'terms'
+               ]["terms_field_tests"] == [1, 2, 3]
 
         query = cls({"terms_field": tuple(i for i in range(1, 3 + 1))}).query
-        assert query['query']['bool']['must'][0]['terms']["terms_field_tests"] == [1, 2, 3]
+        assert query['query']['bool']['must'][0][
+                   'terms'
+               ]["terms_field_tests"] == [1, 2, 3]
 
         class _IterableExample:
 
@@ -55,30 +59,42 @@ class TestCaseTermsElasticField:
                 return self._current - 1
 
         query = cls({"terms_field": _IterableExample(1, 5)}).query
-        assert query['query']['bool']['must'][0]['terms']["terms_field_tests"] == [1, 2, 3, 4]
+        assert query['query']['bool']['must'][0][
+                   'terms'
+               ]["terms_field_tests"] == [1, 2, 3, 4]
 
     def test_field_name(self, cls):
         query = cls({"terms_field": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['terms']["terms_field_tests"] == [1, 2, 3]
+        assert query['query']['bool']['must'][0][
+                   'terms'
+               ]["terms_field_tests"] == [1, 2, 3]
 
         cls.terms_field.field_name = "changed_terms_field"
 
         query = cls({"terms_field": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['terms']["changed_terms_field"] == [1, 2, 3]
+        assert query['query']['bool']['must'][0][
+                   'terms'
+               ]["changed_terms_field"] == [1, 2, 3]
 
     def test_logic_operator(self, cls):
         query = cls({"terms_field": [1, 2, 3]}).query
-        assert query['query']['bool']['must'][0]['terms']["terms_field_tests"] == [1, 2, 3]
+        assert query['query']['bool']['must'][0][
+                   'terms'
+               ]["terms_field_tests"] == [1, 2, 3]
 
         cls.terms_field._logic_operator = "filter"
 
         query = cls({"terms_field": [1, 2, 3]}).query
-        assert query['query']['bool']['filter'][0]['terms']["terms_field_tests"] == [1, 2, 3]
+        assert query['query']['bool']['filter'][0][
+                   'terms'
+               ]["terms_field_tests"] == [1, 2, 3]
 
         cls.terms_field._logic_operator = "should"
 
         query = cls({"terms_field": [1, 2, 3]}).query
-        assert query['query']['bool']['should'][0]['terms']["terms_field_tests"] == [1, 2, 3]
+        assert query['query']['bool']['should'][0][
+                   'terms'
+               ]["terms_field_tests"] == [1, 2, 3]
 
 
 class TestCaseTermsElasticFieldIntegration:
@@ -142,7 +158,10 @@ class TestCaseTermsElasticFieldIntegration:
             value=["sample-1", "sample-2", "sample-3"],
         ),
     ])
-    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+    def test_request(self,
+                     elasticsearch_client,
+                     make_builder_instance,
+                     builder_params):
         query = make_builder_instance(builder_params).query
         data = elasticsearch_client.search(index=self.index_name, **query)
         assert isinstance(data, dict)

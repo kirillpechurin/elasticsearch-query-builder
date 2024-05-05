@@ -34,39 +34,55 @@ class TestCaseMatchElasticField:
 
     def test_validation(self, cls):
         query = cls({"query_string_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['query_string']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'query_string'
+               ]["query"] == "test-text"
 
         query = cls({"query_string_field": "[1, 2, 3]"}).query
-        assert query['query']['bool']['must'][0]['query_string']['query'] == "[1, 2, 3]"
+        assert query['query']['bool']['must'][0][
+                   'query_string'
+               ]['query'] == "[1, 2, 3]"
 
         query = cls({"query_string_field": 1.53}).query
-        assert query['query']['bool']['must'][0]['query_string']['query'] == "1.53"
+        assert query['query']['bool']['must'][0][
+                   'query_string'
+               ]['query'] == "1.53"
 
     def test_field_name(self, cls):
         query = cls({"query_string_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['query_string']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'query_string'
+               ]["query"] == "test-text"
 
         cls.query_string_field.field_name = "changed_query_string_field_test"
 
         query = cls({"query_string_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['query_string'] == {
+        assert query['query']['bool']['must'][0][
+                   'query_string'
+               ] == {
             "query": "test-text",
             "default_field": "query_string_field_test"
         }
 
     def test_logic_operator(self, cls):
         query = cls({"query_string_field": "test-text"}).query
-        assert query['query']['bool']['must'][0]['query_string']["query"] == "test-text"
+        assert query['query']['bool']['must'][0][
+                   'query_string'
+               ]["query"] == "test-text"
 
         cls.query_string_field._logic_operator = "filter"
 
         query = cls({"query_string_field": "test-text"}).query
-        assert query['query']['bool']['filter'][0]['query_string']["query"] == "test-text"
+        assert query['query']['bool']['filter'][0][
+                   'query_string'
+               ]["query"] == "test-text"
 
         cls.query_string_field._logic_operator = "should"
 
         query = cls({"query_string_field": "test-text"}).query
-        assert query['query']['bool']['should'][0]['query_string']["query"] == "test-text"
+        assert query['query']['bool']['should'][0][
+                   'query_string'
+               ]["query"] == "test-text"
 
     def test_default_attrs(self, cls):
         assert cls.query_string_field._attrs == [
@@ -284,7 +300,10 @@ class TestCaseQueryStringElasticFieldIntegration:
             value="sample text",
         ),
     ])
-    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+    def test_request(self,
+                     elasticsearch_client,
+                     make_builder_instance,
+                     builder_params):
         query = make_builder_instance(builder_params).query
         data = elasticsearch_client.search(index=self.index_name, **query)
         assert isinstance(data, dict)

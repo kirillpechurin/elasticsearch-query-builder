@@ -35,36 +35,52 @@ class TestCaseMatchPhrasePrefixElasticField:
 
     def test_validation(self, cls):
         query = cls({"match_phrase_prefix": "test_text"}).query
-        assert query['query']['bool']['must'][0]['match_phrase_prefix']['test_field']["query"] == "test_text"
+        assert query['query']['bool']['must'][0][
+                   'match_phrase_prefix'
+               ]['test_field']["query"] == "test_text"
 
         query = cls({"match_phrase_prefix": "test"}).query
-        assert query['query']['bool']['must'][0]['match_phrase_prefix']['test_field']['query'] == "test"
+        assert query['query']['bool']['must'][0][
+                   'match_phrase_prefix'
+               ]['test_field']['query'] == "test"
 
         query = cls({"match_phrase_prefix": "test text"}).query
-        assert query['query']['bool']['must'][0]['match_phrase_prefix']['test_field']['query'] == 'test text'
+        assert query['query']['bool']['must'][0][
+                   'match_phrase_prefix'
+               ]['test_field']['query'] == 'test text'
 
     def test_field_name(self, cls):
         query = cls({"match_phrase_prefix": "test_text"}).query
-        assert query['query']['bool']['must'][0]['match_phrase_prefix']['test_field']["query"] == "test_text"
+        assert query['query']['bool']['must'][0][
+                   'match_phrase_prefix'
+               ]['test_field']["query"] == "test_text"
 
         cls.match_phrase_prefix.field_name = "changed_test_field"
 
         query = cls({"match_phrase_prefix": "test_text"}).query
-        assert query['query']['bool']['must'][0]['match_phrase_prefix']['changed_test_field']["query"] == "test_text"
+        assert query['query']['bool']['must'][0][
+                   'match_phrase_prefix'
+               ]['changed_test_field']["query"] == "test_text"
 
     def test_logic_operator(self, cls):
         query = cls({"match_phrase_prefix": "test_text"}).query
-        assert query['query']['bool']['must'][0]['match_phrase_prefix']['test_field']["query"] == "test_text"
+        assert query['query']['bool']['must'][0][
+                   'match_phrase_prefix'
+               ]['test_field']["query"] == "test_text"
 
         cls.match_phrase_prefix._logic_operator = "filter"
 
         query = cls({"match_phrase_prefix": "test_text"}).query
-        assert query['query']['bool']['filter'][0]['match_phrase_prefix']['test_field']["query"] == "test_text"
+        assert query['query']['bool']['filter'][0][
+                   'match_phrase_prefix'
+               ]['test_field']["query"] == "test_text"
 
         cls.match_phrase_prefix._logic_operator = "should"
 
         query = cls({"match_phrase_prefix": "test_text"}).query
-        assert query['query']['bool']['should'][0]['match_phrase_prefix']['test_field']["query"] == "test_text"
+        assert query['query']['bool']['should'][0][
+                   'match_phrase_prefix'
+               ]['test_field']["query"] == "test_text"
 
 
 class TestCaseMatchPhrasePrefixElasticFieldIntegration:
@@ -105,7 +121,10 @@ class TestCaseMatchPhrasePrefixElasticFieldIntegration:
             value="sample text",
         ),
     ])
-    def test_request(self, elasticsearch_client, make_builder_instance, builder_params):
+    def test_request(self,
+                     elasticsearch_client,
+                     make_builder_instance,
+                     builder_params):
         query = make_builder_instance(builder_params).query
         data = elasticsearch_client.search(index=self.index_name, **query)
         assert isinstance(data, dict)
