@@ -40,13 +40,13 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
-        es-server-stack-version: ["7.4.0", "8.4.0"]
+        es-server-stack-version: ["7.4.0", "8.10.2"]
         python-es-version: ["7.0.0", "8.0.0"]
 
         exclude:
           - es-server-stack-version: "7.4.0"
             python-es-version: "8.0.0"
-          - es-server-stack-version: "8.0.0"
+          - es-server-stack-version: "8.10.2"
             python-es-version: "7.0.0"
 
     steps:
