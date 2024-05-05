@@ -61,7 +61,7 @@ jobs:
           elasticsearch_password: ${{ env.ELASTICSEARCH_PASSWORD }}
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -72,7 +72,7 @@ jobs:
           python3 -m pip install "elasticsearch==${{ matrix.python-es-version }}"
           python3 -m pip install -r requirements.tests.txt
 
-      - name: Prepare test environment for Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.es-version }}
+      - name: Prepare test environment for Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.python-es-version }}
         run: |
           export ELASTICSEARCH_URL=${{ env.ELASTICSEARCH_URL }}
           export ELASTICSEARCH_USERNAME=${{ env.ELASTICSEARCH_USERNAME }}
@@ -80,9 +80,9 @@ jobs:
           
           envsubst < ./tests/.env.template > ./tests/.env
 
-      - name: Run tests with Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.es-version }}
+      - name: Run tests with Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.python-es-version }}
         run: |
-          TEST_OPTS=$(echo "py${{ matrix.python-version }}-es${{ matrix.es-version }}" | tr -d .)
+          TEST_OPTS=$(echo "py${{ matrix.python-version }}-es${{ matrix.python-es-version }}" | tr -d .)
           python3 -m tox -e $TEST_OPTS
 
       - name: Upload test coverage results
