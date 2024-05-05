@@ -93,8 +93,9 @@ jobs:
           name: test-coverage-results-${{ matrix.python-version }}-${{ matrix.es-server-stack-version }}-${{ matrix.python-es-version }}
           path: ${{ env.MOUNT_TEST_COVERAGE_REPORTS }}/common.xml
 
-#      - name: Publish Coverage Report
-#        uses: codecov/codecov-action@v4
-#        with:
-#          fail_ci_if_error: true
-#          files: ${{ env.MOUNT_TEST_COVERAGE_REPORTS }}/common.xml
+      - name: Publish Coverage Report
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          files: ${{ env.MOUNT_TEST_COVERAGE_REPORTS }}/common.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
