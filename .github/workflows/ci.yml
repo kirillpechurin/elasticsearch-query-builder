@@ -13,6 +13,10 @@ on:
 
 env:
   MOUNT_TEST_COVERAGE_REPORTS: ./.github/reports/tests_coverage
+  ELASTICSEARCH_PORT: 9200
+  ELASTICSEARCH_URL: http://localhost:9200
+  ELASTICSEARCH_USERNAME: elastic
+  ELASTICSEARCH_PASSWORD: changeme
 
 jobs:
   lint:
@@ -46,6 +50,8 @@ jobs:
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
           stack-version: ${{ matrix.es-version }}
+          port: ${{ env.ELASTICSEARCH_PORT }}
+          elasticsearch_password: ${{ env.ELASTICSEARCH_PASSWORD }}
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -55,17 +61,26 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
+          python3 -m pip install tox
           python3 -m pip install "elasticsearch==${{ matrix.es-version }}"
           python3 -m pip install -r requirements.tests.txt
 
+      - name: Prepare test environment for Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.es-version }}
+        run: |
+          export ELASTICSEARCH_URL=${{ env.ELASTICSEARCH_URL }}
+          export ELASTICSEARCH_USERNAME=${{ env.ELASTICSEARCH_USERNAME }}
+          export ELASTICSEARCH_PASSWORD=${{ env.ELASTICSEARCH_PASSWORD }}
+          
+          envsubst < ./tests/.env.template > ./tests/.env
+
       - name: Run tests with Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.es-version }}
         run: |
-          echo "TEST_OPTS=py${{ matrix.python-version }}-es${{ matrix.es-version }}" | tr -d . >> $GITHUB_ENV
-          python3 -m tox -e ${{ env.TEST_OPTS }}
+          TEST_OPTS=$(echo "py${{ matrix.python-version }}-es${{ matrix.es-version }}" | tr -d .)
+          python3 -m tox -e $TEST_OPTS
 
       - name: Upload test coverage results
         if: ${{ always() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-coverage-results
           path: ${{ env.MOUNT_TEST_COVERAGE_REPORTS }}/common.xml
