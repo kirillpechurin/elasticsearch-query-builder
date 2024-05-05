@@ -6,6 +6,7 @@
 
 [![pypi](https://badge.fury.io/py/elasticsearch-query-builder.svg)](https://pypi.python.org/pypi/elasticsearch-query-builder)
 
+---
 #### A tool for forming a single query body for further search in Elasticsearch
 
 ## Features
