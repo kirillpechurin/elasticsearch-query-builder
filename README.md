@@ -1,17 +1,27 @@
 # Elasticsearch Query Builder  
-  
+
+[![CI](https://github.com/kirillpechurin/elasticsearch-query-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/kirillpechurin/elasticsearch-query-builder/actions/workflows/ci.yml)
+
+[![codecov](https://codecov.io/github/kirillpechurin/elasticsearch-query-builder/graph/badge.svg?token=U9BZNOTV72)](https://codecov.io/github/kirillpechurin/elasticsearch-query-builder)
+
+[![pypi](https://badge.fury.io/py/elasticsearch-query-builder.svg)](https://pypi.python.org/pypi/elasticsearch-query-builder)
+
+---
 #### A tool for forming a single query body for further search in Elasticsearch
 
 ## Features
 * A single entry point for receiving a ready-made request
 * Support for the most frequently used fields
 * Basic normalization of input data with the ability to specify the type
-* No requirements
+* No dependencies
 
 ## Installation
 
+Requirements:
+- Installed python `3.8` or higher
+
 ```shell
-git clone https://github.com/kirillpechurin/elasticsearch-query-builder.git <elasticsearch-query-builder-directory>
+pip install elasticsearch-query-builder
 ```
 
 ## Usage
