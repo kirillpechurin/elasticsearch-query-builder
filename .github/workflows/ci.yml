@@ -40,7 +40,14 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
-        es-version: ["7.4.0", "8.0.0"]
+        es-server-stack-version: ["7.4.0", "8.0.0"]
+        python-es-version: ["7.0.0", "8.0.0"]
+
+        exclude:
+          - es-server-stack-version: "7.4.0"
+            python-es-version: "8.0.0"
+          - es-server-stack-version: "8.0.0"
+            python-es-version: "7.0.0"
 
     steps:
       - name: Checkout Repository
@@ -49,7 +56,7 @@ jobs:
       - name: Run Elasticsearch server
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
-          stack-version: ${{ matrix.es-version }}
+          stack-version: ${{ matrix.es-server-stack-version }}
           port: ${{ env.ELASTICSEARCH_PORT }}
           elasticsearch_password: ${{ env.ELASTICSEARCH_PASSWORD }}
 
@@ -62,7 +69,7 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install tox
-          python3 -m pip install "elasticsearch==${{ matrix.es-version }}"
+          python3 -m pip install "elasticsearch==${{ matrix.python-es-version }}"
           python3 -m pip install -r requirements.tests.txt
 
       - name: Prepare test environment for Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.es-version }}
