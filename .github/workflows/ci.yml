@@ -1,0 +1,71 @@
+name: CI
+run-name: CI
+
+on:
+  push:
+    branches:
+      - releases/*
+      - master
+  pull_request:
+    branches:
+      - releases/*
+      - master
+
+env:
+  MOUNT_TEST_COVERAGE_REPORTS: ./.github/reports/tests_coverage
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          python3 -m pip install tox
+      - name: Run linters
+        run: tox -e lint
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        es-version: ["7.0", "8.0"]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Elasticsearch server
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: ${{ matrix.es-version }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run tests with Python ${{ matrix.python-version }} and Elasticsearch ${{ matrix.es-version }}
+        run: |
+          echo "TEST_OPTS=py${{ matrix.python-version }}-es${{ matrix.es-version }}" >> $GITHUB_ENV
+          python -m tox -e ${{ env.TEST_OPTS }}
+
+      - name: Upload test coverage results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-coverage-results
+          path: ${{ env.MOUNT_TEST_COVERAGE_REPORTS }}/common.xml
+
+#      - name: Publish Coverage Report
+#        uses: codecov/codecov-action@v4
+#        with:
+#          fail_ci_if_error: true
+#          files: ${{ env.MOUNT_TEST_COVERAGE_REPORTS }}/common.xml
