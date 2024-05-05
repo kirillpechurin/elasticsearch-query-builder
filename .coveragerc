@@ -1,0 +1,2 @@
+[xml]
+    output = .github/reports/tests_coverage/common.xml
