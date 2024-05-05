@@ -1,9 +1,12 @@
 import os
 
+import dotenv
 import pytest
 from elasticsearch import Elasticsearch
 
 from .builder import ElasticSearchQueryTestBuilder
+
+dotenv.load_dotenv("./.env")
 
 
 def pytest_configure(config):
@@ -11,11 +14,19 @@ def pytest_configure(config):
         "markers", "index_payload: mark test to run with prepared index"
     )
     os.environ.setdefault("ELASTICSEARCH_URL", "http://localhost:9200")
+    os.environ.setdefault("ELASTICSEARCH_USERNAME", "elastic")
+    os.environ.setdefault("ELASTICSEARCH_PASSWORD", "changeme")
 
 
 @pytest.fixture
 def elasticsearch_client(request):
-    client = Elasticsearch(os.environ["ELASTICSEARCH_URL"])
+    client = Elasticsearch(
+        os.environ["ELASTICSEARCH_URL"],
+        http_auth=(
+            os.environ["ELASTICSEARCH_USERNAME"],
+            os.environ["ELASTICSEARCH_PASSWORD"]
+        )
+    )
 
     index_payload = request.node.get_closest_marker("index_payload")
     if index_payload:
