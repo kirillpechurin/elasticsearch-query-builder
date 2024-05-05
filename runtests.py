@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-DEFAULT_ELASTICSEARCH_URL = "localhost:9200"
+DEFAULT_ELASTICSEARCH_URL = "http://localhost:9200"
 
 
 def make_parser():
@@ -30,7 +30,7 @@ def run_tests(*test_args):
     os.environ.setdefault("ELASTICSEARCH_URL", args.elasticsearch_url)
 
     if not test_args:
-        test_args = ["tests"]
+        test_args = ["tests", "--cov", "--cov-report=xml", "--cov-report=term"]
 
     retcode: int = pytest.main(test_args)
     sys.exit(retcode)

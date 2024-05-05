@@ -10,7 +10,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "index_payload: mark test to run with prepared index"
     )
-    os.environ.setdefault("ELASTICSEARCH_URL", "localhost:9200")
+    os.environ.setdefault("ELASTICSEARCH_URL", "http://localhost:9200")
 
 
 @pytest.fixture
