@@ -1,13 +1,12 @@
 # Elasticsearch Query Builder  
 
-[![CI](https://github.com/kirillpechurin/elasticsearch-query-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/kirillpechurin/elasticsearch-query-builder/actions/workflows/ci.yml)
-
-[![codecov](https://codecov.io/github/kirillpechurin/elasticsearch-query-builder/graph/badge.svg?token=U9BZNOTV72)](https://codecov.io/github/kirillpechurin/elasticsearch-query-builder)
-
-[![pypi](https://badge.fury.io/py/elasticsearch-query-builder.svg)](https://pypi.python.org/pypi/elasticsearch-query-builder)
+[![CI](https://github.com/kirillpechurin/elasticsearch-query-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/kirillpechurin/elasticsearch-query-builder/actions/workflows/ci.yml) [![codecov](https://codecov.io/github/kirillpechurin/elasticsearch-query-builder/graph/badge.svg?token=U9BZNOTV72)](https://codecov.io/github/kirillpechurin/elasticsearch-query-builder) [![pypi](https://badge.fury.io/py/elasticsearch-query-builder.svg)](https://pypi.python.org/pypi/elasticsearch-query-builder)
 
 ---
 #### A tool for forming a single query body for further search in Elasticsearch
+
+Build type-safe, declarative Elasticsearch queries from request 
+parameters — no manual query construction, no boilerplate.
 
 ## Features
 * A single entry point for receiving a ready-made request
@@ -106,3 +105,6 @@ As a result of execution, a query object will be constructed, which can be sent 
     }
 }
 ```
+
+## Contributing
+Contributions and issues are welcome — feel free to open a PR or issue.
